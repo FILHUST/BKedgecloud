@@ -238,7 +238,6 @@ public class BLFF  {
 	public void run(LinkedList<LinkedList<Event>> listTotalEvent){
 
 		LinkedList<Double> totalPowerSystem = new LinkedList<Double>();
-		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
 		LinkedList<Double> totalPowerPerSFC = new LinkedList<Double>();
 		LinkedList<Double> serverUtilization = new LinkedList<Double>();
 		LinkedList<Double> systemUtilization = new LinkedList<Double>();
@@ -278,7 +277,7 @@ public class BLFF  {
 		//<------REQUEST_LOOP
 		for(int eventInTW = 0; eventInTW < listTotalEvent.size(); eventInTW ++) { // window of 1 hour
 			
-			double energyTW = 0;
+			double power1h = 0;
 			
 			LinkedList<Event> listEvent = listTotalEvent.get(eventInTW);
 
@@ -349,7 +348,7 @@ public class BLFF  {
 				} // join request
 				numSFCActive = mappingServer.getListSFCTotal().size();
 				double power = mappingServer.getPower() + mappingServer.PowerEdgeUsage();
-				energyTW += power*(event.getTime() - time)/1000; //kWh
+				power1h += power*(event.getTime() - time)/1000*1.0; //kW
 				time = event.getTime();
 									
 			} // event loop
@@ -357,8 +356,7 @@ public class BLFF  {
 			acceptance = (numMapReqThisTW*1.0)/numSFCReqThisTW; //after a request
 			totalChainAcceptance.add(acceptance);
 			
-			totalEnergySystem.add(energyTW);
-			totalPowerSystem.add(mappingServer.getPower() + mappingServer.PowerEdgeUsage());
+			totalPowerSystem.add(power1h);
 
 			totalChainActive.add(numSFCActive);
 			systemUtilization.add(numSFCActive*1.0/SYS_CAPACITY);
@@ -398,8 +396,8 @@ public class BLFF  {
 //			write_integer("./PlotBLFF/requestRandomBLFF.txt",requestRandomReceive);
 //			write_integer("./PlotBLFF/totalDecOffloadBLFF.txt",totalDecOffload);
 //			write_integer("./PlotBLFF/totalDenOffloadBLFF.txt",totalDenOffload);
-//			write_double("./PlotBLFF/totalPowerSystemBLFF.txt",totalPowerSystem);
-			write_double("./PlotBLFF/totalEnergySystemBLFF.txt",totalEnergySystem);
+			write_double("./PlotBLFF/totalPowerSystemBLFF.txt",totalPowerSystem);
+//			write_double("./PlotBLFF/totalEnergySystemBLFF.txt",totalEnergySystem);
 			write_double("./PlotBLFF/totalPowerSystemPerSFCBLFF.txt",totalPowerPerSFC);
 //			write_double("./PlotBLFF/totalEdgePowerSystemBLFF.txt", totalEdgePowerSystem);
 //			write_double("./PlotBLFF/totalServerPowerSystemBLFF.txt", totalServerPowerSystem);

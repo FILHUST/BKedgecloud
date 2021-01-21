@@ -281,7 +281,7 @@ public class RESCEFF  {
 	public void run(LinkedList<LinkedList<Event>> listTotalEvent){
 
 		LinkedList<Double> totalPowerSystem = new LinkedList<Double>();
-		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
+//		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
 		LinkedList<Double> totalPowerPerSFC = new LinkedList<Double>();
 		LinkedList<Double> serverUtilization = new LinkedList<Double>();
 		LinkedList<Double> totalChainAcceptance = new LinkedList<Double>();
@@ -327,7 +327,7 @@ public class RESCEFF  {
 		//<------REQUEST_LOOP
 		for(int eventInTW = 0; eventInTW < listTotalEvent.size(); eventInTW ++) { // window of 1 hour
 			
-			double energyTW = 0;
+			double power1h = 0;
 			
 			LinkedList<Event> listEvent = listTotalEvent.get(eventInTW);
 			
@@ -400,7 +400,7 @@ public class RESCEFF  {
 				if(numSFCActive < mappingServer.getListSFCTotal().size())
 					numSFCActive = mappingServer.getListSFCTotal().size();
 				double power = mappingServer.getPower() + mappingServer.PowerEdgeUsage();
-				energyTW += power*(event.getTime() - time)/1000; //kWh
+				power1h += power*(event.getTime() - time)/1000*1.0; //kW
 				time = event.getTime();
 									
 			} // event loop
@@ -408,9 +408,8 @@ public class RESCEFF  {
 			acceptance = (numMapReqThisTW.value*1.0)/numSFCReqThisTW; //after a request
 			totalChainAcceptance.add(acceptance);
 			totalChainRequest.add(numSFCReqThisTW);
-			totalEnergySystem.add(energyTW);
+			totalPowerSystem.add(power1h);
 			totalChainActive.add(numSFCActive);
-			totalPowerSystem.add(mappingServer.getPower() + mappingServer.PowerEdgeUsage());
 			serverUtilization.add(topo.getCPUServerUtilization());
 			listServerUsed.add(topo.getServerUsed());
 
@@ -441,8 +440,8 @@ public class RESCEFF  {
 //			write_integer("./PlotRESCEFF/requestRandomRESCEFF.txt",requestRandomReceive);
 //			write_integer("./PlotRESCEFF/totalDecOffloadRESCEFF.txt",totalDecOffload);
 //			write_integer("./PlotRESCEFF/totalDenOffloadRESCEFF.txt",totalDenOffload);
-//			write_double("./PlotRESCEFF/totalPowerSystemRESCEFF.txt",totalPowerSystem);
-			write_double("./PlotRESCEFF/totalEnergySystemRESCEFF.txt",totalEnergySystem);
+			write_double("./PlotRESCEFF/totalPowerSystemRESCEFF.txt",totalPowerSystem);
+//			write_double("./PlotRESCEFF/totalEnergySystemRESCEFF.txt",totalEnergySystem);
 			write_double("./PlotRESCEFF/totalPowerSystemPerSFCRESCEFF.txt",totalPowerPerSFC);
 //			write_double("./PlotRESCEFF/totalEdgePowerSystemRESCEFF.txt", totalEdgePowerSystem);
 //			write_double("./PlotRESCEFF/totalServerPowerSystemRESCEFF.txt", totalServerPowerSystem);

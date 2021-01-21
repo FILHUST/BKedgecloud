@@ -252,7 +252,7 @@ public class SFCCMFF  {
 	public void run(LinkedList<LinkedList<Event>> listTotalEvent){
 
 		LinkedList<Double> totalPowerSystem = new LinkedList<Double>();
-		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
+//		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
 		LinkedList<Double> serverUtilization = new LinkedList<Double>();
 		LinkedList<Double> systemUtilization = new LinkedList<Double>();
 		LinkedList<Double> totalChainAcceptance = new LinkedList<Double>();
@@ -288,7 +288,7 @@ public class SFCCMFF  {
 		//<------REQUEST_LOOP
 		for(int eventInTW = 0; eventInTW < listTotalEvent.size(); eventInTW ++) { // window of 1 hour
 			
-			double energyTW = 0;
+			double power1h = 0;
 
 			LinkedList<Event> listEvent = listTotalEvent.get(eventInTW);
 			
@@ -363,7 +363,7 @@ public class SFCCMFF  {
 				} // join request
 				
 				double power = mappingServer.getPower() + mappingServer.PowerEdgeUsage();
-				energyTW += power*(event.getTime() - time)/1000; //kWh
+				power1h += power*(event.getTime() - time)/1000*1.0; //kW
 				time = event.getTime();
 				
 				if(numSFCActive < mappingServer.getListSFCTotal().size())
@@ -375,8 +375,7 @@ public class SFCCMFF  {
 			totalChainRequest.add(numSFCReqThisTW);
 			totalChainActive.add(numSFCActive);
 			systemUtilization.add(numSFCActive*1.0/SYS_CAPACITY);
-			totalEnergySystem.add(energyTW);
-			totalPowerSystem.add(mappingServer.getPower() + mappingServer.PowerEdgeUsage());
+			totalPowerSystem.add(power1h);
 			serverUtilization.add(topo.getCPUServerUtilization());
 			listServerUsed.add(topo.getServerUsed());
 				
@@ -411,8 +410,8 @@ public class SFCCMFF  {
 //			write_integer("./PlotSFCCMFF/requestRandomSFCCMFF.txt",requestRandomReceive);
 //			write_integer("./PlotSFCCMFF/totalDecOffloadSFCCMFF.txt",totalDecOffload);
 //			write_integer("./PlotSFCCMFF/totalDenOffloadSFCCMFF.txt",totalDenOffload);
-//			write_double("./PlotSFCCMFF/totalPowerSystemSFCCMFF.txt",totalPowerSystem);
-			write_double("./PlotSFCCMFF/totalEnergySystemSFCCMFF.txt",totalEnergySystem);
+			write_double("./PlotSFCCMFF/totalPowerSystemSFCCMFF.txt",totalPowerSystem);
+//			write_double("./PlotSFCCMFF/totalEnergySystemSFCCMFF.txt",totalPowerSystem);
 //			write_double("./PlotSFCCMFF/totalPowerSystemPerSFCSFCCMFF.txt",totalPowerPerSFC);
 //			write_double("./PlotSFCCMFF/totalEdgePowerSystemSFCCMFF.txt", totalEdgePowerSystem);
 //			write_double("./PlotSFCCMFF/totalServerPowerSystemSFCCMFF.txt", totalServerPowerSystem);

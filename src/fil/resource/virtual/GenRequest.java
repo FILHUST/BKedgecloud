@@ -7,6 +7,8 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
 
+import org.apache.commons.math3.distribution.PoissonDistribution;
+
 import fil.resource.substrate.Rpi;
 
 
@@ -50,10 +52,12 @@ public class GenRequest {
 		
 		for(int WD = 0; WD < numOfWD; WD ++) {
 			
-			double lambda = LUT[WD]*COF;
+			PoissonDistribution poisson = new PoissonDistribution(LUT[WD]*COF);
+			int lambda = poisson.sample(); // get random 
+//			int lambda = (int) poisson.getMean(); // get mean 
 
 			double timeArrival = WD;
-//			System.out.println("lambda: " + lambda);
+			System.out.println("lambda: " + lambda);
 
 
 //			decide number of camera arrives each pi
@@ -63,7 +67,7 @@ public class GenRequest {
 			}
 			
 			Random rand = new Random();
-			int numChain = (int) lambda;
+			int numChain = lambda;
 			while(numChain > 0) {
 				int device = rand.nextInt(PINUMBER);
 				int camera = rand.nextInt(2); // # of camera need to be opened

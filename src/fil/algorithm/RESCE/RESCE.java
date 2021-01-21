@@ -291,7 +291,6 @@ public class RESCE  {
 	public void run(LinkedList<LinkedList<Event>> listTotalEvent){
 
 		LinkedList<Double> totalPowerSystem = new LinkedList<Double>();
-		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
 		LinkedList<Double> totalPowerPerSFC = new LinkedList<Double>();
 		LinkedList<Double> serverUtilization = new LinkedList<Double>();
 		LinkedList<Double> totalChainAcceptance = new LinkedList<Double>();
@@ -343,7 +342,7 @@ public class RESCE  {
 		//<------REQUEST_LOOP
 		for(int eventInTW = 0; eventInTW < listTotalEvent.size(); eventInTW ++) { // window of 1 hour
 			
-			double energyTW = 0;
+			double power1h = 0;
 			double totalEdgeUtil = 0.0;
 			double totalCloudUtil = 0.0;
 			
@@ -465,7 +464,7 @@ public class RESCE  {
 				
 				
 				double power = mappingServer.getPower() + mappingServer.PowerEdgeUsage();
-				energyTW += power*(event.getTime() - time)/1000; //kWh
+				power1h += power*(event.getTime() - time)/1000*1.0; //
 				time = event.getTime();
 				
 				if(numSFCActive < mappingServer.getListSFCTotal().size())
@@ -487,7 +486,7 @@ public class RESCE  {
 			acceptance = (numMapReqThisTW.value*1.0)/numSFCReqThisTW; //after a request
 			totalChainAcceptance.add(acceptance);
 			
-			totalEnergySystem.add(energyTW);
+			totalPowerSystem.add(power1h);
 //			totalPowerSystem.add(mappingServer.getPower() + mappingServer.PowerEdgeUsage());
 			
 			totalChainRequest.add(numSFCReqThisTW);
@@ -527,7 +526,6 @@ public class RESCE  {
 			write_integer("./PlotRESCE/listServerUsedRESCE.txt",listServerUsed);
 			write_integer("./PlotRESCE/requestRandomRESCE.txt",requestRandomReceive);
 			write_double("./PlotRESCE/totalPowerSystemRESCE.txt",totalPowerSystem);
-			write_double("./PlotRESCE/totalEnergySystemRESCE.txt",totalEnergySystem);
 			write_double("./PlotRESCE/totalPowerSystemPerSFCRESCE.txt",totalPowerPerSFC);
 			write_double("./PlotRESCE/totalLoadEdgeRESCE.txt",totalLoadEdge);
 			write_double("./PlotRESCE/totalBwEdgeRESCE.txt",totalBwEdge);

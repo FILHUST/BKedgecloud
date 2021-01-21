@@ -249,7 +249,7 @@ public class BLRESCE  {
 	public void run(LinkedList<LinkedList<Event>> listTotalEvent){
 
 		LinkedList<Double> totalPowerSystem = new LinkedList<Double>();
-		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
+//		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
 		LinkedList<Double> serverUtilization = new LinkedList<Double>();
 		LinkedList<Double> totalChainAcceptance = new LinkedList<Double>();
 		LinkedList<Double> edgeUtilization = new LinkedList<Double>();
@@ -286,7 +286,7 @@ public class BLRESCE  {
 		//<------REQUEST_LOOP
 		for(int eventInTW = 0; eventInTW < listTotalEvent.size(); eventInTW ++) { // window of 1 hour
 			
-			double energyTW = 0;
+			double power1h = 0;
 			double totalEdgeUtil = 0.0;
 			double totalCloudUtil = 0.0;
 			
@@ -401,7 +401,7 @@ public class BLRESCE  {
 				} // join request
 				
 				double power = mappingServer.getPower() + mappingServer.PowerEdgeUsage();
-				energyTW += power*(event.getTime() - time)/1000; //kWh
+				power1h += power*(event.getTime() - time)/1000*1.0; //kW
 				time = event.getTime();
 				if(numSFCActive < mappingServer.getListSFCTotal().size())
 					numSFCActive = mappingServer.getListSFCTotal().size();
@@ -417,10 +417,9 @@ public class BLRESCE  {
 			cloudUtilization.add(totalCloudUtil*100/(eventReceive*CLOUD_CAPACITY));
 			acceptance = (numMapReqThisTW*1.0)/numSFCReqThisTW; //after a request
 			totalChainAcceptance.add(acceptance);
-			totalEnergySystem.add(energyTW);
+			totalPowerSystem.add(power1h);
 			totalChainActive.add(numSFCActive);
 			systemUtilization.add(numSFCActive*1.0/SYS_CAPACITY);
-			totalPowerSystem.add(mappingServer.getPower() + mappingServer.PowerEdgeUsage());
 			serverUtilization.add(topo.getCPUServerUtilization());
 			listServerUsed.add(topo.getServerUsed());
 			totalChainLeave.add(numSFCLeave);
@@ -454,8 +453,8 @@ public class BLRESCE  {
 			write_integer("./PlotBLRESCE/totalChainJoinBLRESCE.txt",totalChainJoin);
 			write_integer("./PlotBLRESCE/listServerUsedBLRESCE.txt",listServerUsed);
 //			write_integer("./PlotBLRESCE/requestRandomBLRESCE.txt",requestRandomReceive);
-//			write_double("./PlotBLRESCE/totalPowerSystemBLRESCE.txt",totalPowerSystem);
-			write_double("./PlotBLRESCE/totalEnergySystemBLRESCE.txt",totalEnergySystem);
+			write_double("./PlotBLRESCE/totalPowerSystemBLRESCE.txt",totalPowerSystem);
+//			write_double("./PlotBLRESCE/totalEnergySystemBLRESCE.txt",totalEnergySystem);
 //			write_double("./PlotBLRESCE/totalPowerSystemPerSFCBLRESCE.txt",totalPowerPerSFC);
 //			write_double("./PlotBLRESCE/totalLoadEdgeBLRESCE.txt",totalLoadEdge);
 //			write_double("./PlotBLRESCE/totalBwEdgeBLRESCE.txt",totalBwEdge);

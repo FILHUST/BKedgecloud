@@ -252,7 +252,7 @@ public static SFC costModel(SFC sfc, Rpi pi, Topology topo) {
 	public void run(LinkedList<LinkedList<Event>> listTotalEvent){
 
 		LinkedList<Double> totalPowerSystem = new LinkedList<Double>();
-		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
+//		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
 		LinkedList<Double> totalPowerPerSFC = new LinkedList<Double>();
 		LinkedList<Double> serverUtilization = new LinkedList<Double>();
 		LinkedList<Double> totalChainAcceptance = new LinkedList<Double>();
@@ -301,7 +301,7 @@ public static SFC costModel(SFC sfc, Rpi pi, Topology topo) {
 		//<------REQUEST_LOOP
 		for(int eventInTW = 0; eventInTW < listTotalEvent.size(); eventInTW ++) { // window of 1 hour
 			
-			double energyTW = 0;
+			double power1h = 0;
 			double totalEdgeUtil = 0.0;
 			double totalCloudUtil = 0.0;
 			
@@ -417,7 +417,7 @@ public static SFC costModel(SFC sfc, Rpi pi, Topology topo) {
 				} // join request
 				
 				double power = mappingServer.getPower() + mappingServer.PowerEdgeUsage();
-				energyTW += power*(event.getTime() - time)/1000; //kWh
+				power1h += power*(event.getTime() - time)/1000; //kWh
 				time = event.getTime();
 				if(numSFCActive < mappingServer.getListSFCTotal().size())
 					numSFCActive = mappingServer.getListSFCTotal().size();
@@ -433,10 +433,9 @@ public static SFC costModel(SFC sfc, Rpi pi, Topology topo) {
 	
 			acceptance = (numMapReqThisTW*1.0)/numSFCReqThisTW; //after a request
 			totalChainAcceptance.add(acceptance);
-			totalEnergySystem.add(energyTW);
+			totalPowerSystem.add(power1h);
 			totalChainActive.add(numSFCActive);
 			systemUtilization.add(numSFCActive*1.0/SYS_CAPACITY);
-			totalPowerSystem.add(mappingServer.getPower() + mappingServer.PowerEdgeUsage());
 			serverUtilization.add(topo.getCPUServerUtilization());
 			listServerUsed.add(topo.getServerUsed());
 			
@@ -474,7 +473,7 @@ public static SFC costModel(SFC sfc, Rpi pi, Topology topo) {
 			write_integer("./PlotSFCCMRESCE/listServerUsedSFCCM-RESCE.txt",listServerUsed);
 			write_integer("./PlotSFCCMRESCE/requestRandomSFCCM-RESCE.txt",requestRandomReceive);
 			write_double("./PlotSFCCMRESCE/totalPowerSystemSFCCM-RESCE.txt",totalPowerSystem);
-			write_double("./PlotSFCCMRESCE/totalEnergySystemSFCCM-RESCE.txt",totalEnergySystem);
+//			write_double("./PlotSFCCMRESCE/totalEnergySystemSFCCM-RESCE.txt",totalEnergySystem);
 			write_double("./PlotSFCCMRESCE/totalPowerSystemPerSFCSFCCM-RESCE.txt",totalPowerPerSFC);
 			write_double("./PlotSFCCMRESCE/totalLoadEdgeSFCCM-RESCE.txt",totalLoadEdge);
 			write_double("./PlotSFCCMRESCE/totalBwEdgeSFCCM-RESCE.txt",totalBwEdge);

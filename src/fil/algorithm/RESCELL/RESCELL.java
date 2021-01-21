@@ -274,29 +274,20 @@ public class RESCELL  {
 
 	public void run(LinkedList<LinkedList<Event>> listTotalEvent){
 
-		LinkedList<Double> totalPowerSystemConsolidation = new LinkedList<Double>();
 		LinkedList<Double> totalPowerSystem = new LinkedList<Double>();
-		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
+//		LinkedList<Double> totalEnergySystem = new LinkedList<Double>();
 		LinkedList<Double> totalPowerPerSFC = new LinkedList<Double>();
 		LinkedList<Double> serverUtilization = new LinkedList<Double>();
 		LinkedList<Double> totalChainAcceptance = new LinkedList<Double>();
-		LinkedList<Double> totalPiAcceptance = new LinkedList<Double>();
 		LinkedList<Integer> listServerUsed = new LinkedList<Integer>();
-		LinkedList<Integer> totalChainSystem = new LinkedList<Integer>();
 		LinkedList<Integer> totalChainActive = new LinkedList<Integer>();
-		LinkedList<Integer> listDecInCloud = new LinkedList<Integer>();
-		LinkedList<Integer> listDenInCloud = new LinkedList<Integer>();
-		LinkedList<Integer> listReceiveInCloud = new LinkedList<Integer>();
 		LinkedList<Integer> totalChainReject = new LinkedList<Integer>();
 		LinkedList<Double> totalLoadEdge = new LinkedList<Double>();
 		LinkedList<Double> totalBwEdge = new LinkedList<Double>();
 		LinkedList<Integer> totalChainLeave = new LinkedList<Integer>();
 		LinkedList<Integer> totalChainRequest = new LinkedList<>();
-		LinkedList<Integer> listVNFmigration = new LinkedList<>();
-		LinkedList<Double> listLinkUsage = new LinkedList<Double>();
 		LinkedList<Double> cpuEdgeUsagePerSFC = new LinkedList<Double>();
 		LinkedList<Double> cpuServerUsagePerSFC = new LinkedList<Double>();
-		LinkedList<Double> averageBWUsage = new LinkedList<Double>();
 		LinkedList<Double> capacity = new LinkedList<Double>();
 		LinkedList<Double> capacityEdge = new LinkedList<Double>();
 		LinkedList<Double> capacityCloud = new LinkedList<Double>();
@@ -322,27 +313,18 @@ public class RESCELL  {
 		}
 	
 		double acceptance = 0;
-		double acceptancePi = 0;
-		int requestIndex = 0; // number of request
 		double time = 0.0;
 		
-		LinkedList<Integer> requestRandomReceive = new LinkedList<>();
-
 		//<------REQUEST_LOOP
 		for(int eventInTW = 0; eventInTW < listTotalEvent.size(); eventInTW ++) { // window of 1 hour
 			
-			double energyTW = 0;
+			double power1h = 0;
 			
 			LinkedList<Event> listEvent = listTotalEvent.get(eventInTW);
 			
 			int numSFCActive = 0;
-			int numPiReceive = 0; // number of Pi receives request > 0
-			int piAccept = 0;
 			int numSFCReqThisTW = 0;
-			IntHolder numMapReqThisTW = new IntHolder(0);
-			
-			LinkedList<Double> loadEdgeNumPi = new LinkedList<>();
-			LinkedList<Double> bwEdgeNumPi = new LinkedList<>();			
+			IntHolder numMapReqThisTW = new IntHolder(0);			
 		
 			for(int eventIn = 0; eventIn < listEvent.size(); eventIn ++) {
 				
@@ -406,14 +388,13 @@ public class RESCELL  {
 		
 						numMapReqThisTW.value += mappingServer.getListSFC().size();
 						
-						piAccept ++; //num of accepted Pi (accept if at least 1 SFC has been mapped
 					}
 					
 				} // join request
 				if(numSFCActive < mappingServer.getListSFCTotal().size())
 					numSFCActive = mappingServer.getListSFCTotal().size();
 				double power = mappingServer.getPower() + mappingServer.PowerEdgeUsage();
-				energyTW += power*(event.getTime() - time)/1000; //kWh
+				power1h += power*(event.getTime() - time)/1000; //kWh
 				time = event.getTime();
 									
 			} // event loop
@@ -422,8 +403,7 @@ public class RESCELL  {
 			totalChainAcceptance.add(acceptance);
 			totalChainRequest.add(numSFCReqThisTW);
 			totalChainActive.add(numSFCActive);
-			totalEnergySystem.add(energyTW);
-			totalPowerSystem.add(mappingServer.getPower() + mappingServer.PowerEdgeUsage());
+			totalPowerSystem.add(power1h);
 			serverUtilization.add(topo.getCPUServerUtilization());
 			listServerUsed.add(topo.getServerUsed());
 				
@@ -459,8 +439,8 @@ public class RESCELL  {
 //			write_integer("./PlotRESCELL/requestRandomRESCE-LL.txt",requestRandomReceive);
 //			write_integer("./PlotRESCELL/totalDecOffloadRESCE-LL.txt",totalDecOffload);
 //			write_integer("./PlotRESCELL/totalDenOffloadRESCE-LL.txt",totalDenOffload);
-//			write_double("./PlotRESCELL/totalPowerSystemRESCE-LL.txt",totalPowerSystem);
-			write_double("./PlotRESCELL/totalEnergySystemRESCE-LL.txt",totalEnergySystem);
+			write_double("./PlotRESCELL/totalPowerSystemRESCE-LL.txt",totalPowerSystem);
+//			write_double("./PlotRESCELL/totalEnergySystemRESCE-LL.txt",totalEnergySystem);
 			write_double("./PlotRESCELL/totalPowerSystemPerSFCRESCE-LL.txt",totalPowerPerSFC);
 //			write_double("./PlotRESCELL/totalEdgePowerSystemRESCE-LL.txt", totalEdgePowerSystem);
 //			write_double("./PlotRESCELL/totalServerPowerSystemRESCE-LL.txt", totalServerPowerSystem);
