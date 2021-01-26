@@ -57,7 +57,7 @@ public class GenRequest {
 //			int lambda = (int) poisson.getMean(); // get mean 
 
 			double timeArrival = WD;
-			System.out.println("lambda: " + lambda);
+//			System.out.println("lambda: " + lambda);
 
 
 //			decide number of camera arrives each pi
